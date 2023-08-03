@@ -31,6 +31,54 @@ exports.createBook = async (req, res) => {
     await book.save();
     res.status(201).json(book);
   } catch (error) {
-    res.status(400).json({ error: "Bad request" });
+    if (error.name === "ValidationError") {
+      // Handle Mongoose validation errors
+      const validationErrors = {};
+      for (const key in error.errors) {
+        validationErrors[key] = error.errors[key].message;
+      }
+      res.status(400).json({ errors: validationErrors });
+    } else if (error.message) {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
+};
+
+exports.updateBook = async (req, res) => {
+  const bookId = req.params.id;
+  const { name, isbn, author } = req.body;
+
+  try {
+    const updatedBook = await Book.findByIdAndUpdate(
+      bookId,
+      { name, isbn, author },
+      { new: true }
+    ).populate("author");
+
+    if (!updatedBook) {
+      return res.status(404).json({ error: "Book not found" });
+    }
+
+    res.json(updatedBook);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+exports.deleteBook = async (req, res) => {
+  const bookId = req.params.id;
+
+  try {
+    const deletedBook = await Book.findByIdAndDelete(bookId);
+
+    if (!deletedBook) {
+      return res.status(404).json({ error: "Book not found" });
+    }
+
+    res.json({ message: "Book deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
   }
 };
