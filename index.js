@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const routes = require("./routes/routes");
 
 // Environmemnt Variables
@@ -10,6 +11,7 @@ const db = require("./db.connection");
 
 const app = express();
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use("/api", routes);
 
