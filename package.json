@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start-dev": "nodemon index.js",
-    "start-prod": "pm2 start index.js"
+    "start-prod": "nodemon start index.js"
   },
   "repository": "https://github.com/tharindud02/library-API-backend.git",
   "author": "tharindu <tharindud02@gmail.com>",
